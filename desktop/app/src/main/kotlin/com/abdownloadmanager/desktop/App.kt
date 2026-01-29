@@ -197,12 +197,12 @@ private fun defaultApp(
             // However, on Windows-ARM64, OpenGL causes silent failures - use Direct3D instead.
             
             // Option 1 (CURRENT): Direct3D - native, works on Windows-ARM64
-            val renderApi = if (Arch.getCurrentArch() == Arch.Arm64) "DIRECT3D" else "OPENGL"
+            // val renderApi = if (Arch.getCurrentArch() == Arch.Arm64) "DIRECT3D" else "OPENGL"
             
             // Option 2 (ALTERNATIVE): ANGLE - translates OpenGL ES → D3D12, more stable
             // May avoid Direct3D resize/flash bugs while staying GPU-accelerated and power efficient
             // Note: ANGLE has a known issue with transparent windows (SKIKO-1089)
-            // val renderApi = if (Arch.getCurrentArch() == Arch.Arm64) "ANGLE" else "OPENGL"
+            val renderApi = if (Arch.getCurrentArch() == Arch.Arm64) "ANGLE" else "OPENGL"
             
             System.setProperty("skiko.renderApi", renderApi)
         }

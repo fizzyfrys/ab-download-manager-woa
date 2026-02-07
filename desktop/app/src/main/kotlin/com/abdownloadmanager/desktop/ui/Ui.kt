@@ -36,6 +36,7 @@ import com.abdownloadmanager.desktop.pages.singleDownloadPage.ShowDownloadDialog
 import com.abdownloadmanager.desktop.pages.updater.ShowUpdaterDialog
 import com.abdownloadmanager.desktop.ui.configurable.comon.CommonConfigurableRenderersForDesktop
 import com.abdownloadmanager.desktop.ui.configurable.platform.PlatformConfigurableRenderersForDesktop
+import com.abdownloadmanager.desktop.ui.widget.Tray
 import com.abdownloadmanager.desktop.ui.widget.ShowMessageDialogs
 import com.abdownloadmanager.desktop.utils.AppInfo
 import com.abdownloadmanager.desktop.utils.GlobalAppExceptionHandler
@@ -53,11 +54,9 @@ import com.abdownloadmanager.shared.util.mvi.HandleEffects
 import com.abdownloadmanager.shared.util.ui.ProvideDebugInfo
 import com.abdownloadmanager.shared.util.ui.icon.MyIcons
 import ir.amirab.util.compose.action.buildMenu
-import ir.amirab.util.compose.asStringSource
 import ir.amirab.util.compose.localizationmanager.LanguageManager
 import ir.amirab.util.desktop.PlatformDockToggler
 import ir.amirab.util.desktop.mac.event.MacEventHandler
-import ir.amirab.util.desktop.systemtray.IComposeSystemTray
 import ir.amirab.util.platform.Platform
 import ir.amirab.util.platform.isMac
 import kotlinx.coroutines.CoroutineScope
@@ -224,17 +223,18 @@ private fun ApplicationScope.SystemTray(
     val useSystemTray by component.useSystemTray.collectAsState()
     if (useSystemTray) {
         LaunchedEffect(Unit) { PlatformDockToggler.hide() }
-        IComposeSystemTray.Instance.ComposeSystemTray(
-            icon = MyIcons.appIcon,
-            onClick = showDownloadList,
-            tooltip = AppInfo.displayName.asStringSource(),
-            menu = remember {
-                buildMenu {
-                    +showDownloadList
-                    +gotoSettingsAction
-                    +requestExitAction
-                }
+        val menu = remember {
+            buildMenu {
+                +showDownloadList
+                +gotoSettingsAction
+                +requestExitAction
             }
+        }
+        Tray(
+            icon = MyIcons.appIcon,
+            tooltip = AppInfo.displayName,
+            primaryAction = { showDownloadList.onClick() },
+            menu = menu,
         )
     } else {
         LaunchedEffect(Unit) { PlatformDockToggler.show() }
